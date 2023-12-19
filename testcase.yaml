@@ -1,0 +1,1516 @@
+    AWSTemplateFormatVersion: 2010-09-09
+    
+    Description: ETAP template for VPC.
+
+    Parameters:
+      ###########################################################   VPC CIDR   #######################################################
+      VpcCIDR:
+        Description: Please enter the IP range (CIDR) for this VPC
+        Type: String
+        Default: 10.10.0.0/16
+        
+      VpcCIDR2:
+        Description: Please enter the second IP range (CIDR) for this VPC
+        Type: String
+        Default:
+          10.10.1.0/20
+
+  ##    CIDR FOR VPC1  ##
+      PublicSubnet1CIDR1:
+        Description: Please enter the IP range (CIDR) for the public subnet in the first Availability Zone
+        Type: String
+        Default: 10.10.0.0/19  # Desired CIDR block here
+
+
+      PublicSubnet2CIDR1:
+        Description: Please enter the IP range (CIDR) for the public subnet in the second Availability Zone
+        Type: String
+        Default: 10.10.32.0/19  # Desired CIDR block here
+
+      PublicSubnet3CIDR1:
+        Description: Please enter the IP range (CIDR) for the public subnet in the third Availability Zone
+        Type: String
+        Default: 10.10.64.0/19  # Desired CIDR block here
+
+      PrivateSubnet1CIDR1:
+        Description: Please enter the IP range (CIDR) for the private subnet in the first Availability Zone
+        Type: String
+        Default: 10.10.96.0/19  # Desired CIDR block here
+
+      PrivateSubnet2CIDR1:
+        Description: Please enter the IP range (CIDR) for the private subnet in the second Availability Zone
+        Type: String
+        Default: 10.10.128.0/19 # Desired CIDR block here
+
+      PrivateSubnet3CIDR1:
+        Description: Please enter the IP range (CIDR) for the private subnet in the third Availability Zone
+        Type: String
+        Default:
+          10.10.160.0/19  # Desired CIDR block here
+
+  ##   CIDR FOR VPC2  ##
+
+      PublicSubnet1CIDR2:
+        Description: Please enter the IP range (CIDR) for the public subnet in the first Availability Zone
+        Type: String
+        Default: 10.10.0.0/23 # Desired CIDR block here
+
+      PublicSubnet2CIDR2:
+        Description: Please enter the IP range (CIDR) for the public subnet in the second Availability Zone
+        Type: String
+        Default: 10.10.2.0/23 # Desired CIDR block here
+
+      PublicSubnet3CIDR2:
+        Description: Please enter the IP range (CIDR) for the public subnet in the third Availability Zone
+        Type: String
+        Default: 10.10.4.0/23 # Desired CIDR block here
+
+      PrivateSubnet1CIDR2:
+        Description: Please enter the IP range (CIDR) for the private subnet in the first Availability Zone
+        Type: String
+        Default: 10.10.6.0/23 # Desired CIDR block here
+
+      PrivateSubnet2CIDR2:
+        Description: Please enter the IP range (CIDR) for the private subnet in the second Availability Zone
+        Type: String
+        Default: 10.10.8.0/23 # Desired CIDR block here
+
+      PrivateSubnet3CIDR2:
+        Description: Please enter the IP range (CIDR) for the private subnet in the third Availability Zone
+        Type: String
+        Default: 10.10.10.0/23  # Desired CIDR block here
+
+                        ##### operator email for notification #####
+
+      OperatorEMail:
+        Description: Please enter Email address for notification topic
+        Type: String
+        Default: jomar.egot@etapinc.com  # Desired CIDR block here
+
+#### AMI- ID ####
+
+      EC2ImageID:
+        Description: The ID of the custom AMI
+        Type: String
+        Default: ami-03caf91bb3d81b843 # AMI-ID here
+
+#### Launch Template ####
+
+      WebLaunchTemplateName:
+        AllowedPattern: '[a-zA-Z0-9\(\)\.\-/_]+'
+        ConstraintDescription: No spaces or special characters like '&', '*', '@'.
+        Default: WebServerTier-Template  #Desired Name for Template
+        Type: String
+
+
+      AppLaunchTemplateName:
+        AllowedPattern: '[a-zA-Z0-9\(\)\.\-/_]+'
+        ConstraintDescription: No spaces or special characters like '&', '*', '@'.
+        Default: AppServerTier-Template  # Desire Name for template
+        Type: String
+
+      WebLaunchTemplateNameVpc2:
+        AllowedPattern: '[a-zA-Z0-9\(\)\.\-/_]+'
+        ConstraintDescription: No spaces or special characters like '&', '*', '@'.
+        Default: WebServerTier-Template-Vpc2  #Desired Name for Template
+        Type: String
+
+
+      AppLaunchTemplateNameVpc2:
+        AllowedPattern: '[a-zA-Z0-9\(\)\.\-/_]+'
+        ConstraintDescription: No spaces or special characters like '&', '*', '@'.
+        Default: AppServerTier-Template-Vpc2  # Desire Name for template
+        Type: String
+
+#### Instance Type ####
+      InstanceType:
+        Description: WebServers EC2 instance type
+        Type: String
+        Default: t2.micro
+        AllowedValues:
+        
+          - t1.micro
+          - t2.nano
+          - t2.micro
+          - t2.small
+        ConstraintDescription: Must be a valid EC2 instance type.
+
+      PublicSubnets:
+        Type: CommaDelimitedList
+        Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
+        Default: ap-southeast-1a, ap-southeast-1b, ap-southeast-1c
+
+
+      PrivateSubnets:
+        Type: CommaDelimitedList
+        Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
+        Default: ap-southeast-1a, ap-southeast-1b, ap-southeast-1c
+
+#### Database Parameters ####
+
+      BackEnd:
+        Type: String
+        Default: testing
+      DBUsername:
+        Type: String
+        Default: MasterDb
+
+      DBPassword:
+        Type: String 
+        Default: 1Qaz_4567()
+  
+
+      BackEndVpc2:
+        Type: String 
+        Default: testing2
+      DBUsernameVpc2:
+        Type: String 
+        Default: MasterDb2
+
+      DBPasswordVpc2:
+        Type: String
+        Default: 1Qaz_4567()
+
+
+#### Database Snapshot ID ####
+
+      DBSnapshot: 
+        Type : String
+        Default: arn:aws:rds:ap-southeast-1:765186506449:cluster-snapshot:testsnaphot
+
+
+
+
+
+
+
+
+
+
+############################################### RESOURCES #####################################################
+    
+    Resources:
+
+
+
+####### VPC #######
+      Vpc1:
+        Type: AWS::EC2::VPC
+        Properties:
+          CidrBlock: !Ref VpcCIDR
+          EnableDnsSupport: true
+          EnableDnsHostnames: true
+          Tags:
+            - Key: Name
+              Value: Vpc1
+
+      Vpc2:
+        Type: AWS::EC2::VPC
+        Properties:
+          CidrBlock: !Ref VpcCIDR2
+          EnableDnsSupport: true
+          EnableDnsHostnames: true
+          Tags:
+            - Key: Name
+              Value:
+                Vpc2
+
+########  Intenet GateWay  ########
+
+      InternetGateway:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+          Tags:
+            - Key: Name
+              Value: Internet Gateway
+
+      InternetGateway2:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+          Tags:
+            - Key: Name
+              Value:
+                Internet Gateway
+
+########  IGW ATTACHMENT ########
+
+      InternetGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+          InternetGatewayId: !Ref InternetGateway
+          VpcId: !Ref Vpc1
+
+      InternetGatewayAttachment2:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+          InternetGatewayId: !Ref InternetGateway2
+          VpcId:
+            !Ref Vpc2
+
+########  SUBNETS  ########
+
+
+
+#### PUBLIC SUBNET ####
+    
+    #### VPC 1 ####
+
+      PublicSubnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+          MapPublicIpOnLaunch: True
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1a"
+          CidrBlock: !Ref PublicSubnet1CIDR1
+          Tags:
+            - Key: Name
+              Value: PublicSubnet1
+
+      PublicSubnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1b"
+          CidrBlock: !Ref PublicSubnet2CIDR1
+          Tags:
+            - Key: Name
+              Value: PublicSubnet2
+
+      PublicSubnet3:
+        Type: AWS::EC2::Subnet
+        Properties:
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1c"
+          CidrBlock: !Ref PublicSubnet3CIDR1
+          Tags:
+            - Key: Name
+              Value: PublicSubnet3
+
+    #### VPC 2 ####
+
+      PublicSubnet1Vpc2:
+        Type: AWS::EC2::Subnet
+        Properties:
+          MapPublicIpOnLaunch: True
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1a"
+          CidrBlock: !Ref PublicSubnet1CIDR2
+          Tags:
+            - Key: Name
+              Value: PublicSubnet1Vpc2
+
+      PublicSubnet2Vpc2:
+        Type: AWS::EC2::Subnet
+        Properties:
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1b"
+          CidrBlock: !Ref PublicSubnet2CIDR2
+          Tags:
+            - Key: Name
+              Value: PublicSubnet2Vpc2
+
+      PublicSubnet3Vpc2:
+        Type: AWS::EC2::Subnet
+        Properties:
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1c"
+          CidrBlock: !Ref PublicSubnet3CIDR2
+          Tags:
+            - Key: Name
+              Value:
+                PublicSubnet3Vpc2
+
+#### PRIVATE SUBNET ####
+
+    #### VPC1 ####
+
+      PrivateSubnet1:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway
+        Properties:
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1a"
+          CidrBlock: !Ref PrivateSubnet1CIDR1
+          Tags:
+            - Key: Name
+              Value: PrivateSubnet1
+
+      PrivateSubnet2:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway        
+        Properties:
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1b"
+          CidrBlock: !Ref PrivateSubnet2CIDR1
+          Tags:
+            - Key: Name
+              Value: PrivateSubnet2
+
+      PrivateSubnet3:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway
+        Properties:
+          VpcId: !Ref Vpc1
+          AvailabilityZone: "ap-southeast-1c"
+          CidrBlock: !Ref PrivateSubnet3CIDR1
+          Tags:
+            - Key: Name
+              Value: PrivateSubnet3
+
+    #### VPC 2 ####
+
+      PrivateSubnet1Vpc2:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway2
+        Properties:
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1a"
+          CidrBlock: !Ref PrivateSubnet1CIDR2
+          Tags:
+            - Key: Name
+              Value: PrivateSubnet1Vpc2
+
+      PrivateSubnet2Vpc2:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway2
+        Properties:
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1b"
+          CidrBlock: !Ref PrivateSubnet2CIDR2
+          Tags:
+            - Key: Name
+              Value: PrivateSubnet2Vpc2
+
+      PrivateSubnet3Vpc2:
+        Type: AWS::EC2::Subnet
+        DependsOn:
+            - NatGateway2
+        Properties:
+          VpcId: !Ref Vpc2
+          AvailabilityZone: "ap-southeast-1c"
+          CidrBlock: !Ref PrivateSubnet3CIDR2
+          Tags:
+            - Key: Name
+              Value:
+                PrivateSubnet3Vpc2
+
+#### ROUTE TABLE ####
+
+    #### PUBLIC ####
+
+      PublicRouteTable1: #vpc1
+        Type: AWS::EC2::RouteTable
+        Properties:
+          VpcId: !Ref Vpc1
+          Tags:
+            - Key: Name
+              Value: PublicRouteTable
+
+      PublicRouteTable2: #vpc2
+        Type: AWS::EC2::RouteTable
+        Properties:
+          VpcId: !Ref Vpc2
+          Tags:
+            - Key: Name
+              Value: PublicRouteTable
+    #### PRIVATE ####
+
+      PrivateRouteTable1: #vpc1
+        Type: AWS::EC2::RouteTable
+        Properties:
+          VpcId: !Ref Vpc1
+          Tags:
+            - Key: Name
+              Value: PrivateRouteTable
+
+      PrivateRouteTable2: #vpc2
+        Type: AWS::EC2::RouteTable
+        Properties:
+          VpcId: !Ref Vpc2
+          Tags:
+            - Key: Name
+              Value: PrivateRouteTable
+
+#### ROUTE ####
+
+      Vpc1DefaultPublicRoute1: # For VPC1
+        Type: AWS::EC2::Route
+        DependsOn: InternetGatewayAttachment
+        Properties:
+          RouteTableId: !Ref PublicRouteTable1
+          DestinationCidrBlock: 0.0.0.0/0
+          # Route traffic through the NAT Gateway:
+          GatewayId: !Ref InternetGateway
+
+      Vpc1DefaulPrivateRoute1: # For VPC1
+        Type: AWS::EC2::Route
+        Properties:
+          RouteTableId: !Ref PrivateRouteTable1
+          DestinationCidrBlock: 0.0.0.0/0
+          # Route traffic through the NAT Gateway:
+          NatGatewayId: !Ref NatGateway
+
+      Vpc2DefaultPublicRoute3: # For VPC2
+        Type: AWS::EC2::Route
+        DependsOn: InternetGatewayAttachment2
+        Properties:
+          RouteTableId: !Ref PublicRouteTable2
+          DestinationCidrBlock: 0.0.0.0/0
+          # Route traffic through the NAT Gateway:
+          GatewayId: !Ref InternetGateway2
+
+      Vpc2DefaulPrivateRoute4: # For VPC2
+        Type: AWS::EC2::Route
+        Properties:
+          RouteTableId: !Ref PrivateRouteTable2
+          DestinationCidrBlock: 0.0.0.0/0
+          # Route traffic through the NAT Gateway:
+          NatGatewayId:
+            !Ref NatGateway2
+
+#### SUBNET ROUTE TABLE ASSOCIATION #####
+      #VPC 1
+      Vpc1PublicSubnetRouteTableAssociation1:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet1
+          RouteTableId: !Ref PublicRouteTable1
+
+      Vpc1PublicSubnetRouteTableAssociation2:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet2
+          RouteTableId: !Ref PublicRouteTable1
+
+      Vpc1PublicSubnetRouteTableAssociation3:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet3
+          RouteTableId: !Ref PublicRouteTable1
+
+      Vpc1PrivateSubnetRouteTableAssociation1:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet1
+          RouteTableId: !Ref PrivateRouteTable1
+
+      Vpc1PrivateSubnetRouteTableAssociation2:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet2
+          RouteTableId: !Ref PrivateRouteTable1
+
+      Vpc1PrivateSubnetRouteTableAssociation3:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet3
+          RouteTableId: !Ref PrivateRouteTable1
+
+      #VPC 2
+      Vpc2PublicSubnetRouteTableAssociation1:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet1Vpc2
+          RouteTableId: !Ref PublicRouteTable2
+
+      Vpc2PublicSubnetRouteTableAssociation2:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet2Vpc2
+          RouteTableId: !Ref PublicRouteTable2
+
+      Vpc2PublicSubnetRouteTableAssociation3:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PublicSubnet3Vpc2
+          RouteTableId: !Ref PublicRouteTable2
+
+      Vpc2PrivateSubnetRouteTableAssociation1:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet1Vpc2
+          RouteTableId: !Ref PrivateRouteTable2
+
+      Vpc2PrivateSubnetRouteTableAssociation2:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet2Vpc2
+          RouteTableId: !Ref PrivateRouteTable2
+
+      Vpc2PrivateSubnetRouteTableAssociation3:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+          SubnetId: !Ref PrivateSubnet3Vpc2
+          RouteTableId:
+            !Ref PrivateRouteTable2
+
+#### NAT ####
+
+      ElasticIP1:
+        Type: AWS::EC2::EIP
+        # Condition: EnabledNatGateway
+        Properties:
+          Domain: vpc
+
+      NatGateway:
+        Type: AWS::EC2::NatGateway
+        # Condition: EnabledNatGateway
+        Properties:
+          AllocationId: !GetAtt ElasticIP1.AllocationId
+          SubnetId: !Ref PublicSubnet1
+
+      ElasticIP2:
+        Type: AWS::EC2::EIP
+        # Condition: EnabledNatGateway
+        Properties:
+          Domain: vpc
+
+      NatGateway2:
+        Type: AWS::EC2::NatGateway
+        # Condition: EnabledNatGateway
+        Properties:
+          AllocationId: !GetAtt ElasticIP2.AllocationId
+          SubnetId: !Ref PublicSubnet1Vpc2
+
+####  KEYPAIR  #####
+
+      WebKeyPair:
+        Description: Import your keypair.
+        Type: AWS::EC2::KeyPair
+        Properties:
+          KeyName: WebTier Key Pair 
+          PublicKeyMaterial: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGhHj4/hxdw0D/V7XrztLRM33xYpw71a/W3LD+M9zwxK
+          Tags:
+            - Key: Name
+              Value: WebTier-KeyPair
+
+      AppKeyPair:
+        Description: Import your keypair.
+        Type: AWS::EC2::KeyPair
+        Properties:
+          KeyName: AppTier Key Pair 
+          PublicKeyMaterial: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGhHj4/hxdw0D/V7XrztLRM33xYpw71a/W3LD+M9zwxK
+          Tags:
+            - Key: Name
+              Value: AppTier-KeyPair
+
+#### Security Group for Auto Scaling Group ####
+
+## VPC1
+
+      AppAsgSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        DependsOn:
+          - Vpc1
+        Properties:
+          GroupName: AllowEC2TrafficForAPP
+          GroupDescription: Enable SSH access and HTTP access 
+          VpcId: !Ref Vpc1
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+            - IpProtocol: tcp
+              FromPort: 22
+              ToPort: 22
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: App-Asg-SecurityGroup
+
+      WebAsgSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        DependsOn:
+          - Vpc1
+        Properties:
+          GroupName: AllowEC2TrafficForWeb
+          GroupDescription: Enable SSH access and HTTP access 
+          VpcId: !Ref Vpc1
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+            - IpProtocol: tcp
+              FromPort: 22
+              ToPort: 22
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: Web-Asg-SecurityGroup
+
+## VPC2
+
+      AppAsgSecurityGroupVpc2:
+        Type: AWS::EC2::SecurityGroup
+        DependsOn:
+          - Vpc2
+        Properties:
+          GroupName: AllowEC2TrafficForAPP Vpc2
+          GroupDescription: Enable SSH access and HTTP access 
+          VpcId: !Ref Vpc2
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+            - IpProtocol: tcp
+              FromPort: 22
+              ToPort: 22
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: App-Asg-SecurityGroup
+
+      WebAsgSecurityGroupVpc2:
+        Type: AWS::EC2::SecurityGroup
+        DependsOn:
+          - Vpc1
+          - Vpc2
+        Properties:
+          GroupName: AllowEC2TrafficForWeb Vpc2
+          GroupDescription: Enable SSH access and HTTP access 
+          VpcId: !Ref Vpc2
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+            - IpProtocol: tcp
+              FromPort: 22
+              ToPort: 22
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: Web-Asg-SecurityGroup
+
+
+####  Launch Template For auto scaling ####
+
+  ## VPC 1
+
+      AppTierLaunchTemplate:
+        Type: AWS::EC2::LaunchTemplate
+        Properties:
+          LaunchTemplateName: !Ref AppLaunchTemplateName
+          LaunchTemplateData: 
+              ImageId: !Ref EC2ImageID
+              InstanceType: !Ref InstanceType
+              KeyName: !Ref AppKeyPair
+              Monitoring:
+                Enabled: true
+              UserData:
+                 Fn::Base64: 
+                  !Sub |
+                   #!/bin/bash
+                    sudo apt-get update -y
+                    sudo apt-get install -y apache2
+                    sudo apt-get install php-curl php-mysql php -y
+                    sudo systemctl restart apache2
+                    sudo systemctl enable apache2
+              SecurityGroupIds:
+                - !Ref AppAsgSecurityGroup
+          
+      
+      WebTierLaunchTemplate:
+        Type: AWS::EC2::LaunchTemplate
+        Properties:
+          LaunchTemplateName: !Ref WebLaunchTemplateName
+          LaunchTemplateData: 
+              ImageId: !Ref EC2ImageID
+              InstanceType: !Ref InstanceType
+              KeyName: !Ref WebKeyPair
+              Monitoring:
+                Enabled: true
+              UserData:
+                 Fn::Base64: 
+                  !Sub |
+                   #!/bin/bash
+                    sudo apt-get update -y
+                    sudo apt-get install -y apache2
+                    sudo apt-get install php-curl php-mysql php -y
+                    sudo systemctl restart apache2
+                    sudo systemctl enable apache2
+              SecurityGroupIds:
+                - !Ref WebAsgSecurityGroup
+                
+
+  ## VPC 2
+
+      AppTierLaunchTemplateVpc2:
+        Type: AWS::EC2::LaunchTemplate
+        Properties:
+          LaunchTemplateName: !Ref AppLaunchTemplateNameVpc2
+          LaunchTemplateData: 
+              ImageId: !Ref EC2ImageID
+              InstanceType: !Ref InstanceType
+              KeyName: !Ref AppKeyPair
+              Monitoring:
+                Enabled: true
+              UserData:
+                 Fn::Base64: 
+                  !Sub |
+                   #!/bin/bash
+                    sudo apt-get update -y
+                    sudo apt-get install -y apache2
+                    sudo apt-get install php-curl php-mysql php -y
+                    sudo systemctl restart apache2
+                    sudo systemctl enable apache2
+              SecurityGroupIds:
+                - !Ref AppAsgSecurityGroupVpc2
+      
+      WebTierLaunchTemplateVpc2:
+        Type: AWS::EC2::LaunchTemplate
+        Properties:
+          LaunchTemplateName: !Ref WebLaunchTemplateNameVpc2
+          LaunchTemplateData: 
+              ImageId: !Ref EC2ImageID
+              InstanceType: !Ref InstanceType
+              KeyName: !Ref WebKeyPair
+              Monitoring:
+                Enabled: true
+              UserData:
+                 Fn::Base64: 
+                  !Sub |
+                   #!/bin/bash
+                    sudo apt-get update -y
+                    sudo apt-get install -y apache2
+                    sudo apt-get install php-curl php-mysql php -y
+                    sudo systemctl restart apache2
+                    sudo systemctl enable apache2
+              SecurityGroupIds:
+                - !Ref WebAsgSecurityGroupVpc2
+
+
+#### Notification Topic ####
+
+      NotificationTopic:
+        Type: AWS::SNS::Topic
+        Properties:
+          Subscription:
+            #parameters data inputted
+            - Endpoint: !Ref OperatorEMail
+              Protocol: email
+
+#### ELB TARGET GROUP ####
+
+  ## VPC1
+
+      ElbTargetGroupWeb:
+        Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+        DependsOn:
+          - Vpc1
+          - Vpc2
+        Properties:
+          HealthCheckIntervalSeconds: 6
+          HealthCheckTimeoutSeconds: 5
+          HealthyThresholdCount: 2
+          Port: 80
+          Protocol: HTTP
+          UnhealthyThresholdCount: 2
+          VpcId: !Ref Vpc1
+          TargetType: instance
+          Tags:
+            - Key: Name
+              Value: Web Target Group
+
+
+      ElbTargetGroupApp:
+        Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+        DependsOn:
+          - Vpc1
+          - Vpc2
+        Properties:
+          HealthCheckIntervalSeconds: 6
+          HealthCheckTimeoutSeconds: 5
+          HealthyThresholdCount: 2
+          Port: 80
+          Protocol: HTTP
+          UnhealthyThresholdCount: 2
+          VpcId: !Ref Vpc1
+          TargetType: instance
+          Tags:
+            - Key: Name
+              Value: App Target Group
+
+  ## VPC 2
+
+      ElbTargetGroupWebVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+        DependsOn:
+          - Vpc1
+          - Vpc2
+        Properties:
+          HealthCheckIntervalSeconds: 6
+          HealthCheckTimeoutSeconds: 5
+          HealthyThresholdCount: 2
+          Port: 80
+          Protocol: HTTP
+          UnhealthyThresholdCount: 2
+          VpcId: !Ref Vpc2
+          TargetType: instance
+          Tags:
+            - Key: Name
+              Value: Web Target Group
+
+
+      ElbTargetGroupAppVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+        DependsOn:
+          - Vpc1
+          - Vpc2
+        Properties:
+          HealthCheckIntervalSeconds: 6
+          HealthCheckTimeoutSeconds: 5
+          HealthyThresholdCount: 2
+          Port: 80
+          Protocol: HTTP
+          UnhealthyThresholdCount: 2
+          VpcId: !Ref Vpc2
+          TargetType: instance
+          Tags:
+            - Key: Name
+              Value: App Target Group
+
+#### ELB SECURITY GROUP ####
+
+  ## VPC 1
+  
+      LbSGWeb:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupName: "Webserver Group traffic"
+          GroupDescription: "Enable HTTP access on the inbound port for Web ELB"
+          VpcId: !Ref Vpc1
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: LbSG-Web
+
+      LbSGApp:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupName: "App server  Group traffic"
+          GroupDescription: "Enable HTTP access on the inbound port for App ELB"
+          VpcId: !Ref Vpc1
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: LbSG-App
+
+  ## VPC2
+
+      LbSGWebVpc2:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupName: "Vpc 2 Webserver Group traffic"
+          GroupDescription: "Enable HTTP access on the inbound port for Web ELB"
+          VpcId: !Ref Vpc2
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: LbSG-Web-Vpc2
+
+      LbSGAppVpc2:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupName: "Vpc2 App server  Group traffic"
+          GroupDescription: "Enable HTTP access on the inbound port for App ELB"
+          VpcId: !Ref Vpc2
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidrIp: 0.0.0.0/0
+          Tags:
+            - Key: Name
+              Value: LbSG-App-Vpc2
+
+
+
+
+#### LOAD BALANCERS ####
+
+  ## VPC 1 ##
+
+      ElasticLoadBalancerWeb:
+        Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+        Properties:
+          Subnets: 
+            - !Ref PublicSubnet1
+            - !Ref PublicSubnet2
+            - !Ref PublicSubnet3
+          SecurityGroups: 
+            - !Ref LbSGWeb
+          Tags:
+            - Key: Name
+              Value: WebLoadBalancer
+
+      ElasticLoadBalancerApp:
+        Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+        Properties:
+          Scheme: "internal"
+          Subnets: 
+            - !Ref PrivateSubnet1
+            - !Ref PrivateSubnet2
+            - !Ref PrivateSubnet3
+          SecurityGroups: 
+            - !Ref LbSGApp
+          Tags:
+            - Key: Name
+              Value: AppLoadBalancer
+
+  ## VPC 2
+
+      ElasticLoadBalancerWebVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+        Properties:
+          Subnets: 
+            - !Ref PublicSubnet1Vpc2
+            - !Ref PublicSubnet2Vpc2
+            - !Ref PublicSubnet3Vpc2
+          SecurityGroups: 
+            - !Ref LbSGWebVpc2
+          Tags:
+            - Key: Name
+              Value: WebLoadBalancerVpc2
+
+      ElasticLoadBalancerAppVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+        Properties:
+          Scheme: "internal"
+          Subnets: 
+            - !Ref PrivateSubnet1Vpc2
+            - !Ref PrivateSubnet2Vpc2
+            - !Ref PrivateSubnet3Vpc2
+          SecurityGroups: 
+            - !Ref LbSGAppVpc2
+          Tags:
+            - Key: Name
+              Value: AppLoadBalancerVpc2
+
+#### ELB LISTENERS ####
+
+## Vpc1
+      ElbListenerWeb:
+        Type: 'AWS::ElasticLoadBalancingV2::Listener'
+        Properties:
+          DefaultActions:
+          - Type: forward
+            TargetGroupArn: !Ref ElbTargetGroupWeb
+          LoadBalancerArn: !Ref ElasticLoadBalancerWeb
+          Port: '80'
+          Protocol: HTTP
+
+      ElbListenerApp:
+        Type: 'AWS::ElasticLoadBalancingV2::Listener'
+        Properties:
+          DefaultActions:
+          - Type: forward
+            TargetGroupArn: !Ref ElbTargetGroupApp
+          LoadBalancerArn: !Ref ElasticLoadBalancerApp
+          Port: '80'
+          Protocol: HTTP
+
+## Vpc2
+
+      ElbListenerWebVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::Listener'
+        Properties:
+          DefaultActions:
+          - Type: forward
+            TargetGroupArn: !Ref ElbTargetGroupWebVpc2
+          LoadBalancerArn: !Ref ElasticLoadBalancerWebVpc2
+          Port: '80'
+          Protocol: HTTP
+
+      ElbListenerAppVpc2:
+        Type: 'AWS::ElasticLoadBalancingV2::Listener'
+        Properties:
+          DefaultActions:
+          - Type: forward
+            TargetGroupArn: !Ref ElbTargetGroupAppVpc2
+          LoadBalancerArn: !Ref ElasticLoadBalancerAppVpc2
+          Port: '80'
+          Protocol: HTTP
+
+#### AUTO SCALING GROUP ####
+
+  ## WEB 
+      AutoScalingGroupWeb:
+          Type: AWS::AutoScaling::AutoScalingGroup
+          DependsOn:
+            - ElbTargetGroupWeb
+            - ElasticLoadBalancerWeb
+            - PrivateSubnet1
+            - PrivateSubnet2
+            - PrivateSubnet3
+            - NatGateway
+          Properties:
+              AutoScalingGroupName:  Web Auto Scaling Group
+              VPCZoneIdentifier: 
+                - !Ref PrivateSubnet1
+                - !Ref PrivateSubnet2
+                - !Ref PrivateSubnet3
+                
+              HealthCheckGracePeriod: 300
+              HealthCheckType: EC2
+              LaunchTemplate:
+                LaunchTemplateId: !Ref WebTierLaunchTemplate
+                #LaunchConfigurationName: !Ref WebTierLaunchTemplate
+                Version: !GetAtt WebTierLaunchTemplate.LatestVersionNumber
+              MinSize: '1'
+              MaxSize: '4'
+              DesiredCapacity: '2'
+              Tags:
+                - Key: Name
+                  Value: Asg-Web
+                  PropagateAtLaunch: true
+              TargetGroupARNs:
+                  - !Ref ElbTargetGroupWeb
+              NotificationConfiguration:
+                TopicARN: !Ref NotificationTopic
+                NotificationTypes:
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH'
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
+
+      AutoScalingGroupWebVpc2:
+          Type: AWS::AutoScaling::AutoScalingGroup
+          DependsOn:
+            - ElbTargetGroupWebVpc2
+            - ElasticLoadBalancerWebVpc2
+            - PrivateSubnet1Vpc2
+            - PrivateSubnet2Vpc2
+            - PrivateSubnet3Vpc2
+            - NatGateway
+          Properties:
+              AutoScalingGroupName:  Web Auto Scaling Group Vpc2
+              VPCZoneIdentifier: 
+                - !Ref PrivateSubnet1Vpc2
+                - !Ref PrivateSubnet2Vpc2
+                - !Ref PrivateSubnet3Vpc2
+                
+                
+              HealthCheckGracePeriod: 300
+              HealthCheckType: EC2
+              LaunchTemplate:
+                LaunchTemplateId: !Ref WebTierLaunchTemplateVpc2
+                #LaunchConfigurationName: !Ref WebTierLaunchTemplate
+                Version: !GetAtt WebTierLaunchTemplateVpc2.LatestVersionNumber
+              MinSize: '1'
+              MaxSize: '4'
+              DesiredCapacity: '2'
+              Tags:
+                - Key: Name
+                  Value: Asg-Web-Vpc2
+                  PropagateAtLaunch: true
+              TargetGroupARNs:
+                  - !Ref ElbTargetGroupWebVpc2
+              NotificationConfiguration:
+                TopicARN: !Ref NotificationTopic
+                NotificationTypes:
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH'
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
+
+
+      
+
+  ## APP
+
+      AutoScalingGroupApp:
+          Type: AWS::AutoScaling::AutoScalingGroup
+          DependsOn:
+            - ElbTargetGroupApp
+            - ElasticLoadBalancerApp
+          Properties:
+              AutoScalingGroupName:  App Auto Scaling Group
+              VPCZoneIdentifier: 
+                - !Ref PrivateSubnet1
+                - !Ref PrivateSubnet2
+                - !Ref PrivateSubnet3
+              HealthCheckGracePeriod: 300
+              HealthCheckType: EC2
+              LaunchTemplate:
+                LaunchTemplateId: !Ref AppTierLaunchTemplate
+                Version: !GetAtt AppTierLaunchTemplate.LatestVersionNumber
+              MinSize: '1'
+              MaxSize: '4'
+              DesiredCapacity: '2'
+              Tags:
+                - Key: Name
+                  Value: Asg-App
+                  PropagateAtLaunch: true
+              TargetGroupARNs:
+                  - !Ref ElbTargetGroupApp
+
+              NotificationConfiguration:
+                TopicARN: !Ref NotificationTopic
+                NotificationTypes:
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH'
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
+
+      AutoScalingGroupAppVpc2:
+          Type: AWS::AutoScaling::AutoScalingGroup
+          DependsOn:
+            - ElbTargetGroupAppVpc2
+            - ElasticLoadBalancerAppVpc2
+          Properties:
+              AutoScalingGroupName:  App Auto Scaling Group Vpc2
+              VPCZoneIdentifier: 
+                - !Ref PrivateSubnet1Vpc2
+                - !Ref PrivateSubnet2Vpc2
+                - !Ref PrivateSubnet3Vpc2
+              HealthCheckGracePeriod: 300
+              HealthCheckType: EC2
+              LaunchTemplate:
+                LaunchTemplateId: !Ref AppTierLaunchTemplateVpc2
+                Version: !GetAtt AppTierLaunchTemplateVpc2.LatestVersionNumber
+              MinSize: '1'
+              MaxSize: '4'
+              DesiredCapacity: '2'
+              Tags:
+                - Key: Name
+                  Value: Asg-App-Vpc2
+                  PropagateAtLaunch: true
+              TargetGroupARNs:
+                  - !Ref ElbTargetGroupAppVpc2
+
+              NotificationConfiguration:
+                TopicARN: !Ref NotificationTopic
+                NotificationTypes:
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH'
+                  - 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE'
+                  - 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
+
+#### SCALING POLICY ####
+
+
+# VPC 1
+  ## WEB
+      WebServerScaleUpPolicy:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupWeb
+          Cooldown: 360
+          ScalingAdjustment: 1
+    
+      WebServerScaleDownPolicy:
+        Type: 'AWS::AutoScaling::ScalingPolicy'
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupWeb
+          Cooldown: 360
+          ScalingAdjustment: -1
+    
+      CPUAlarmHigh:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+          AlarmDescription: Scale-up if CPU > 90% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 90
+          AlarmActions: 
+            - !Ref WebServerScaleUpPolicy
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value: !Ref AutoScalingGroupWeb
+          ComparisonOperator: GreaterThanThreshold
+    
+      CPUAlarmLow:
+        Type: 'AWS::CloudWatch::Alarm'
+        Properties:
+          AlarmDescription: Scale-down if CPU < 70% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 70
+          AlarmActions: 
+            - !Ref WebServerScaleDownPolicy
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value:  !Ref AutoScalingGroupWeb
+          ComparisonOperator: LessThanThreshold
+
+  ## APP
+
+      AppServerScaleUpPolicy:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupApp
+          Cooldown: 360
+          ScalingAdjustment: 1
+    
+      AppServerScaleDownPolicy:
+        Type: 'AWS::AutoScaling::ScalingPolicy'
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupApp
+          Cooldown: 360
+          ScalingAdjustment: -1
+    
+      CPUAlarmHigh:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+          AlarmDescription: Scale-up if CPU > 90% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 90
+          AlarmActions: !Ref AppServerScaleUpPolicy
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value: !Ref AutoScalingGroupApp
+          ComparisonOperator: GreaterThanThreshold
+    
+      CPUAlarmLow:
+        Type: 'AWS::CloudWatch::Alarm'
+        Properties:
+          AlarmDescription: Scale-down if CPU < 70% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 70
+          AlarmActions: 
+            - !Ref AppServerScaleDownPolicy
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value:  !Ref AutoScalingGroupApp
+          ComparisonOperator: LessThanThreshold
+
+
+
+
+# VPC 2
+  ## WEB
+      WebServerScaleUpPolicyVpc2:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupWebVpc2
+          Cooldown: 360
+          ScalingAdjustment: 1
+    
+      WebServerScaleDownPolicyVpc2:
+        Type: 'AWS::AutoScaling::ScalingPolicy'
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupWebVpc2
+          Cooldown: 360
+          ScalingAdjustment: -1
+    
+      CPUAlarmHigh:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+          AlarmDescription: Scale-up if CPU > 90% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 90
+          AlarmActions: 
+            - !Ref WebServerScaleUpPolicyVpc2
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value: !Ref AutoScalingGroupWebVpc2
+          ComparisonOperator: GreaterThanThreshold
+    
+      CPUAlarmLow:
+        Type: 'AWS::CloudWatch::Alarm'
+        Properties:
+          AlarmDescription: Scale-down if CPU < 70% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 70
+          AlarmActions: 
+            - !Ref WebServerScaleDownPolicyVpc2
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value:  !Ref AutoScalingGroupWebVpc2
+          ComparisonOperator: LessThanThreshold
+
+  ## APP
+
+      AppServerScaleUpPolicyVpc2:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupAppVpc2
+          Cooldown: 360
+          ScalingAdjustment: 1
+    
+      AppServerScaleDownPolicyVpc2:
+        Type: 'AWS::AutoScaling::ScalingPolicy'
+        Properties:
+          AdjustmentType: ChangeInCapacity
+          AutoScalingGroupName: !Ref AutoScalingGroupAppVpc2
+          Cooldown: 360
+          ScalingAdjustment: -1
+    
+      CPUAlarmHigh:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+          AlarmDescription: Scale-up if CPU > 90% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 90
+          AlarmActions:
+            - !Ref AppServerScaleUpPolicyVpc2
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value: !Ref AutoScalingGroupAppVpc2
+          ComparisonOperator: GreaterThanThreshold
+    
+      CPUAlarmLow:
+        Type: 'AWS::CloudWatch::Alarm'
+        Properties:
+          AlarmDescription: Scale-down if CPU < 70% for 10 minutes
+          MetricName: CPUUtilization
+          Namespace: AWS/EC2
+          Statistic: Average
+          Period: 300
+          EvaluationPeriods: 2
+          Threshold: 70
+          AlarmActions: 
+            - !Ref AppServerScaleDownPolicyVpc2
+          Dimensions:
+            - Name: AutoScalingGroupName
+              Value:  !Ref AutoScalingGroupAppVpc2
+          ComparisonOperator: LessThanThreshold
+
+
+#### Database ####
+
+      rdsDBSubnetGroup:
+        Type: AWS::RDS::DBSubnetGroup
+        Properties:
+          DBSubnetGroupDescription: Subnet for RDS
+          SubnetIds:
+            - !Ref PublicSubnet3
+            - !Ref PublicSubnet2
+            - !Ref PublicSubnet1
+          Tags:
+            - Key: Name
+              Value: RDS Subnet Group
+
+
+      RDSCluster:
+        Type: "AWS::RDS::DBCluster"
+        DependsOn:
+            - Vpc1
+            - Vpc2
+            - PublicSubnet3
+        Properties:
+
+          MasterUsername: !Ref DBUsername
+          MasterUserPassword: !Ref DBPassword
+          DatabaseName: test
+          Engine: aurora-mysql
+          EngineMode: provisioned
+          VpcSecurityGroupIds:
+          - !Ref RdsInstanceSecurityGroup
+          DBSubnetGroupName: !Ref rdsDBSubnetGroup
+          DBClusterParameterGroupName:
+            Ref: RDSDBClusterParameterGroup
+
+
+      RDSDBInstance1:
+        Type: 'AWS::RDS::DBInstance'
+        Properties:
+          DBParameterGroupName:
+            Ref: RDSDBParameterGroup
+          DBSnapshotIdentifier: !Ref DBSnapshot
+          Engine: aurora-mysql
+          DBClusterIdentifier:
+            Ref: RDSCluster
+          PubliclyAccessible: 'true'
+          DBInstanceClass: db.t3.medium
+
+      RDSDBClusterParameterGroup:
+        Type: 'AWS::RDS::DBClusterParameterGroup'
+        Properties:
+          Description: ETAP database CF
+          Family: aurora-mysql8.0
+          Parameters:
+            time_zone: Asia/Singapore
+      RDSDBParameterGroup:
+        Type: 'AWS::RDS::DBParameterGroup'
+        Properties:
+          Description: CloudFormation Aurora Parameter Group
+          Family: aurora-mysql8.0
+          Parameters:
+            sql_mode: IGNORE_SPACE
+            max_allowed_packet: 1024
+            innodb_buffer_pool_size: '{DBInstanceClassMemory*3/4}'
+
+#### Database Security Group ####
+
+
+
+      RdsInstanceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupName: Security Group For RDS 
+          GroupDescription: "RDS traffic"
+          VpcId: !Ref Vpc1
+          SecurityGroupEgress:
+          - IpProtocol: "-1"  
+            CidrIp: "0.0.0.0/0"
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
